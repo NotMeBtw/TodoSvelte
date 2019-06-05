@@ -1,24 +1,18 @@
 <script>
-  let todos = ["wash", "code"];
-  let todo = "";
+  import Login from "./Login.svelte";
 
-  function addTodo() {
-    todos = [...todos, todo];
-    todo = "";
-  }
+  export let name;
 </script>
 
 <style>
-  h1 {
-    color: purple;
-  }
+
 </style>
 
-<h1>Todo list</h1>
-<input bind:value={todo} placeholder="Enter new todo" />
-<button on:click={addTodo}>Add todo</button>
-<ul>
-  {#each todos as todo}
-    <li>{todo}</li>
-  {/each}
-</ul>
+<svelte:head>
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.4/css/bulma.min.css" />
+</svelte:head>
+
+<h1>{name}</h1>
+<Login />
