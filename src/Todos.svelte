@@ -4,13 +4,10 @@
   import { collectionData } from "rxfire/firestore";
   import { startWith } from "rxjs/operators";
 
-  // User ID passed from parent
   export let uid;
 
-  // Form Text
-  let text = "some task";
+  let text = "";
 
-  // Query requires an index, see screenshot below
   const query = db
     .collection("todos")
     .where("uid", "==", uid)
@@ -19,6 +16,8 @@
   const todos = collectionData(query, "id").pipe(startWith([]));
 
   function add() {
+    if (text === "") return;
+
     db.collection("todos").add({
       uid,
       text,
@@ -43,18 +42,26 @@
   }
 </script>
 
-<style>
-  input {
-    display: block;
-  }
-</style>
+<div class="container">
+  <h1 class="title">Todo</h1>
+  <h2 class="subtitle">
+    A simple app to manage your tasks in
+    <strong>TODO</strong>
+    list
+  </h2>
 
-<ul>
-  {#each $todos as todo}
-    <TodoItem {...todo} on:remove={removeItem} on:toggle={updateStatus} />
-  {/each}
-</ul>
+  <input
+    bind:value={text}
+    class="input is-large"
+    type="text"
+    placeholder="Enter new task"
+    on:keydown={event => event.which === 13 && add()} />
 
-<input bind:value={text} />
-
-<button on:click={add}>Add Task</button>
+  <section class="section">
+    <ul>
+      {#each $todos as todo}
+        <TodoItem {...todo} on:remove={removeItem} on:toggle={updateStatus} />
+      {/each}
+    </ul>
+  </section>
+</div>

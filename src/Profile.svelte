@@ -4,7 +4,11 @@
   export let uid;
 </script>
 
-<h3>Hi {displayName}!</h3>
+<style>
+  .image {
+    padding-right: 0.5rem;
+  }
+</style>
 
-<img src={photoURL} width="100" alt="user avatar" />
-<p>Your userID is {uid}</p>
+<img class="image" src={photoURL} alt="user avatar" />
+<strong>{displayName}</strong>
