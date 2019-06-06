@@ -1,5 +1,6 @@
 <script>
   import TodoItem from "./TodoItem.svelte";
+  import Placeholder from "./Placeholder.svelte";
   import { db } from "./firebase";
   import { collectionData } from "rxfire/firestore";
   import { startWith } from "rxjs/operators";
@@ -40,12 +41,36 @@
       .doc(id)
       .delete();
   }
+
+  function removeAllComplete() {
+    db.collection("todos")
+      .where("uid", "==", uid)
+      .where("complete", "==", true)
+      .get()
+      .then(querySnapshot => querySnapshot.forEach(doc => doc.ref.delete()));
+  }
 </script>
+
+<style>
+  ul {
+    background-color: lightgray;
+    border-radius: 4px;
+    padding: 0.5rem;
+    min-height: 4rem;
+  }
+  section {
+    margin: 3rem auto;
+  }
+  .space-around {
+    display: flex;
+    justify-content: space-between;
+  }
+</style>
 
 <div class="container">
   <h1 class="title">Todo</h1>
   <h2 class="subtitle">
-    A simple app to manage your tasks in
+    A simple app to manage your tasks in form of
     <strong>TODO</strong>
     list
   </h2>
@@ -57,11 +82,42 @@
     placeholder="Enter new task"
     on:keydown={event => event.which === 13 && add()} />
 
-  <section class="section">
-    <ul>
-      {#each $todos as todo}
-        <TodoItem {...todo} on:remove={removeItem} on:toggle={updateStatus} />
-      {/each}
-    </ul>
+  <section>
+    <div class="columns">
+      <div class="column">
+        <p class="title">Not complete</p>
+        <ul>
+          {#each $todos.filter(t => !t.complete) as todo (todo.id)}
+            <TodoItem
+              {...todo}
+              on:remove={removeItem}
+              on:toggle={updateStatus} />
+          {:else}
+            <Placeholder />
+          {/each}
+        </ul>
+      </div>
+      <div class="column">
+        <div class="space-around">
+          <p class="title">Complete</p>
+          <button class="button is-danger" on:click={removeAllComplete}>
+            <span class="icon is-small">
+              <i class="fas fa-times" />
+            </span>
+            <span>Clear</span>
+          </button>
+        </div>
+        <ul class="complete">
+          {#each $todos.filter(t => t.complete) as todo (todo.id)}
+            <TodoItem
+              {...todo}
+              on:remove={removeItem}
+              on:toggle={updateStatus} />
+          {:else}
+            <Placeholder />
+          {/each}
+        </ul>
+      </div>
+    </div>
   </section>
 </div>

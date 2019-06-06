@@ -1,5 +1,6 @@
 <script>
   import { createEventDispatcher } from "svelte";
+  import { fly } from "svelte/transition";
 
   const dispatch = createEventDispatcher();
 
@@ -21,38 +22,42 @@
 </script>
 
 <style>
-  .complete {
-    text-decoration: line-through;
-    color: green;
+  li {
+    padding: 0 1rem;
+    margin: 1rem 0;
+  }
+  article {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 4px;
+    padding: 1rem;
   }
 </style>
 
-<li>
-  <nav class="level">
-    <div class="level-item has-text-centered">
+<li
+  transition:fly={complete ? { x: -200, duration: 500 } : { x: 200, duration: 500 }}>
+  <article class={complete ? 'has-background-primary' : 'has-background-light'}>
+    <div class="is-size-4">{text} </div>
+    <div>
       {#if complete}
-        <div class="complete">{text}</div>
         <button class="button is-light" on:click={toggleStatus}>
           <span class="icon is-small">
             <i class="fas fa-undo" />
           </span>
-          <span>Undo</span>
         </button>
       {:else}
-        <div>{text}</div>
-        <button class="button is-light" on:click={toggleStatus}>
+        <button class="button is-primary" on:click={toggleStatus}>
           <span class="icon is-small">
             <i class="fas fa-check" />
           </span>
-          <span>Done</span>
         </button>
       {/if}
-
       <button class="button is-danger" on:click={remove}>
         <span class="icon is-small">
           <i class="fas fa-times" />
         </span>
       </button>
     </div>
-  </nav>
+  </article>
 </li>
