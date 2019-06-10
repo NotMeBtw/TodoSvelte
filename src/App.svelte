@@ -1,17 +1,25 @@
 <script>
   import Todos from "./Todos.svelte";
   import Profile from "./Profile.svelte";
+  import Home from "./Home.svelte";
 
   import { auth, googleProvider } from "./firebase";
   import { authState } from "rxfire/auth";
 
+  import { fly } from "svelte/transition";
+
   export let name;
   let user;
+  let isBurgerVisible = false;
 
   const unsubscribe = authState(auth).subscribe(u => (user = u));
 
   function login() {
     auth.signInWithPopup(googleProvider);
+  }
+
+  function toggleBurger() {
+    isBurgerVisible = !isBurgerVisible;
   }
 </script>
 
@@ -27,38 +35,44 @@
     <div class="navbar-item">
       <h1 class="title">{name}</h1>
     </div>
+    <button role="button" class="navbar-burger burger button is-primary" aria-label="menu" aria-expanded="false" on:click={toggleBurger}>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+    </button>
   </div>
-
-  <div class="navbar-end">
-    <div class="navbar-item">
-      {#if user}
-        <Profile class="column" {...user} />
-        <div class="column">
-          <button class="button is-danger" on:click={() => auth.signOut()}>
-            <span class="icon is-small">
-              <i class="fas fa-sign-out-alt" />
-            </span>
-            <span>Logout</span>
-          </button>
-        </div>
-      {:else}
-        <div class="column">
-          <button class="button is-info" on:click={login}>
-            <span class="icon is-small">
-              <i class="fas fa-sign-in-alt" />
-            </span>
-            <span>Log in</span>
-          </button>
-        </div>
-      {/if}
+  <div class="navbar-menu {isBurgerVisible ? 'is-active' : ''}" transition:fly>
+    <div class="navbar-end">
+      <div class="navbar-item">
+        {#if user}
+          <Profile class="column" {...user} />
+          <div class="column">
+            <button class="button is-danger" on:click={() => auth.signOut()}>
+              <span class="icon is-small">
+                <i class="fas fa-sign-out-alt" />
+              </span>
+              <span>Logout</span>
+            </button>
+          </div>
+        {:else}
+          <div class="column">
+            <button class="button is-info" on:click={login}>
+              <span class="icon is-small">
+                <i class="fas fa-sign-in-alt" />
+              </span>
+              <span>Log in</span>
+            </button>
+          </div>
+        {/if}
+      </div>
     </div>
   </div>
 </nav>
 
-<section class="section">
+<div>
   {#if user}
     <Todos uid={user.uid} />
   {:else}
-    <b>Log in</b>
+    <Home/>
   {/if}
-</section>
+</div>

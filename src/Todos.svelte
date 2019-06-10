@@ -4,6 +4,8 @@
   import { db } from "./firebase";
   import { collectionData } from "rxfire/firestore";
   import { startWith } from "rxjs/operators";
+  import { flip } from "svelte/animate";
+  import { fade } from "svelte/transition";
 
   export let uid;
 
@@ -53,10 +55,14 @@
 
 <style>
   ul {
-    background-color: lightgray;
     border-radius: 4px;
     padding: 0.5rem;
     min-height: 4rem;
+    transition: all 2s;
+  }
+  li {
+    padding: 0 1rem;
+    margin: 1rem 0;
   }
   section {
     margin: 3rem auto;
@@ -67,13 +73,8 @@
   }
 </style>
 
-<div class="container">
-  <h1 class="title">Todo</h1>
-  <h2 class="subtitle">
-    A simple app to manage your tasks in form of
-    <strong>TODO</strong>
-    list
-  </h2>
+<section class="container" transition:fade>
+  <h1 class="title">Manage your todos</h1>
 
   <input
     bind:value={text}
@@ -85,21 +86,29 @@
   <section>
     <div class="columns">
       <div class="column">
-        <p class="title">Not complete</p>
-        <ul>
+        <p class="title">
+          Not complete ({$todos.filter(t => !t.complete).length})
+        </p>
+        <ul class="has-background-grey-lighter">
           {#each $todos.filter(t => !t.complete) as todo (todo.id)}
-            <TodoItem
-              {...todo}
-              on:remove={removeItem}
-              on:toggle={updateStatus} />
+            <li animate:flip={{ duration: 500 }}>
+              <TodoItem
+                {...todo}
+                on:remove={removeItem}
+                on:toggle={updateStatus} />
+            </li>
           {:else}
-            <Placeholder />
+            <li>
+              <Placeholder />
+            </li>
           {/each}
         </ul>
       </div>
       <div class="column">
         <div class="space-around">
-          <p class="title">Complete</p>
+          <p class="title">
+            Complete ({$todos.filter(t => t.complete).length})
+          </p>
           <button class="button is-danger" on:click={removeAllComplete}>
             <span class="icon is-small">
               <i class="fas fa-times" />
@@ -107,17 +116,21 @@
             <span>Clear</span>
           </button>
         </div>
-        <ul class="complete">
+        <ul class="has-background-grey-lighter">
           {#each $todos.filter(t => t.complete) as todo (todo.id)}
-            <TodoItem
-              {...todo}
-              on:remove={removeItem}
-              on:toggle={updateStatus} />
+            <li animate:flip={{ duration: 500 }}>
+              <TodoItem
+                {...todo}
+                on:remove={removeItem}
+                on:toggle={updateStatus} />
+            </li>
           {:else}
-            <Placeholder />
+            <li>
+              <Placeholder />
+            </li>
           {/each}
         </ul>
       </div>
     </div>
   </section>
-</div>
+</section>
