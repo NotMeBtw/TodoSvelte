@@ -22,6 +22,7 @@
   "dependencies": {
     "firebase": "^6.1.0",
     "rxfire": "^3.5.0",
-    "rxjs": "^6.5.2"
+    "rxjs": "^6.5.2",
+    "ws": "^7.0.0"
   }
 }
