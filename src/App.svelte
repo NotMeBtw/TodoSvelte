@@ -41,7 +41,7 @@
       <span aria-hidden="true"></span>
     </button>
   </div>
-  <div class="navbar-menu {isBurgerVisible ? 'is-active' : ''}" transition:fly>
+  <div class="navbar-menu {isBurgerVisible ? 'is-active' : ''}">
     <div class="navbar-end">
       <div class="navbar-item">
         {#if user}

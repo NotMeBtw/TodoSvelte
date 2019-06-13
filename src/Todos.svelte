@@ -73,7 +73,7 @@
   }
 </style>
 
-<section class="container" transition:fade>
+<section class="container" in:fade>
   <h1 class="title">Manage your todos</h1>
 
   <input
